@@ -1,6 +1,8 @@
+import { EarthquakeElements } from "../types";
+
 const PYTHON_API = "http://localhost:8000";
 
-export const fetch_shakemap = async (earthquake: any) => {
+export const fetch_shakemap = async (earthquake: EarthquakeElements) => {
   const event_id = earthquake.id;
 
   try {

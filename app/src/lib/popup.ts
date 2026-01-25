@@ -1,5 +1,5 @@
 export class CustomPopup {
-  private overlay: any;
+  private overlay: google.maps.OverlayView;
   private position: google.maps.LatLng;
   private container: HTMLDivElement | null = null;
   private content: string;
@@ -38,7 +38,7 @@ export class CustomPopup {
     this.overlay = new Overlay(this);
   }
 
-  onAdd(overlay: any) {
+  onAdd(overlay: google.maps.OverlayView) {
     this.container = document.createElement("div");
     this.container.style.position = "absolute";
     this.container.style.backgroundColor = "white";
@@ -78,7 +78,7 @@ export class CustomPopup {
     }
   }
 
-  draw(overlay: any) {
+  draw(overlay: google.maps.OverlayView) {
     if (!this.container) return;
 
     const overlayProjection = overlay.getProjection();

@@ -21,7 +21,7 @@ export interface RoadElements {
   tags?: {
     highway?: string;
     name?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 

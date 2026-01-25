@@ -1,5 +1,5 @@
 import { Coordinates } from "../types";
-import { RoadElements, Roads } from "../types";
+import { Roads } from "../types";
 
 const OSM_API = "https://overpass-api.de/api/interpreter";
 
@@ -32,7 +32,11 @@ export const intersections_query = (coords: Coordinates): string => {
   return query.trim();
 };
 
-const fetch_osm_data = async (query: string): Promise<any> => {
+interface OSMResponse {
+  elements: unknown[];
+}
+
+const fetch_osm_data = async (query: string): Promise<OSMResponse> => {
   try {
     const response = await fetch(OSM_API, {
       method: "POST",
@@ -59,7 +63,7 @@ export const fetch_roads = async (coords: Coordinates): Promise<Roads> => {
   return fetch_osm_data(query);
 };
 
-export const fetch_intersections = async (coords: Coordinates): Promise<any> => {
+export const fetch_intersections = async (coords: Coordinates): Promise<OSMResponse> => {
   const query = intersections_query(coords);
   return fetch_osm_data(query);
 };

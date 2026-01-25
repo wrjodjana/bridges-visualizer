@@ -3,10 +3,18 @@ import { CustomPopup } from "../popup";
 
 const PYTHON_API = "http://localhost:8000";
 
+interface BridgeData {
+  LATITUDE: number;
+  LONGITUDE: number;
+  LOCATION_009?: string;
+  name?: string;
+  id: string | number;
+}
+
 export class RenderBridges {
   private map: google.maps.Map;
   private markers: google.maps.Marker[] = [];
-  private bridges_data: any[] = [];
+  private bridges_data: BridgeData[] = [];
   private currentPopup: CustomPopup | null = null;
 
   constructor(map: google.maps.Map) {
@@ -33,7 +41,7 @@ export class RenderBridges {
 
       this.bridges_data = bridges;
 
-      bridges.forEach((bridge: any) => {
+      bridges.forEach((bridge: BridgeData) => {
         const marker = new google.maps.Marker({
           position: { lat: bridge.LATITUDE, lng: bridge.LONGITUDE },
           map: this.map,

@@ -22,7 +22,7 @@ export default function Sidebar({ map }: MapProps) {
   const [target_magnitude, set_target_magnitude] = useState<number | null>(null);
   const [loading, set_loading] = useState<string | null>(null);
   const [error, set_error] = useState<string | null>(null);
-  const [bridge_failures, set_bridge_failures] = useState<Array<{bridge_id: number; failure_probability: number; latitude: number; longitude: number}>>([]);
+  const [bridge_failures, set_bridge_failures] = useState<Array<{ bridge_id: number; failure_probability: number; latitude: number; longitude: number }>>([]);
 
   const handle_select_location = async () => {
     if (!map) {
@@ -146,7 +146,7 @@ export default function Sidebar({ map }: MapProps) {
       }
 
       const earthquake = await earthquake_renderer_ref.current.get_earthquakes(selected_coords);
-      
+
       if (earthquake) {
         const shakemap = await fetch_shakemap(earthquake);
         set_shakemap_data(shakemap);
@@ -311,22 +311,10 @@ export default function Sidebar({ map }: MapProps) {
     margin: "0 20px 16px 20px",
   };
 
-  const Button = ({ 
-    children, 
-    onClick, 
-    isLoading = false, 
-    variant = "default",
-    disabled = false 
-  }: { 
-    children: React.ReactNode; 
-    onClick: () => void; 
-    isLoading?: boolean;
-    variant?: "default" | "primary" | "danger";
-    disabled?: boolean;
-  }) => {
+  const Button = ({ children, onClick, isLoading = false, variant = "default", disabled = false }: { children: React.ReactNode; onClick: () => void; isLoading?: boolean; variant?: "default" | "primary" | "danger"; disabled?: boolean }) => {
     const baseStyle = variant === "primary" ? buttonPrimaryStyle : variant === "danger" ? buttonDangerStyle : buttonStyle;
     const [hovered, setHovered] = useState(false);
-    
+
     return (
       <button
         onClick={onClick}
@@ -335,9 +323,7 @@ export default function Sidebar({ map }: MapProps) {
         onMouseLeave={() => setHovered(false)}
         style={{
           ...baseStyle,
-          ...(hovered && !disabled && !isLoading 
-            ? (variant === "primary" ? buttonPrimaryHoverStyle : variant === "danger" ? buttonDangerHoverStyle : buttonHoverStyle)
-            : {}),
+          ...(hovered && !disabled && !isLoading ? (variant === "primary" ? buttonPrimaryHoverStyle : variant === "danger" ? buttonDangerHoverStyle : buttonHoverStyle) : {}),
           opacity: disabled || isLoading ? 0.6 : 1,
           cursor: disabled || isLoading ? "not-allowed" : "pointer",
         }}
@@ -350,8 +336,7 @@ export default function Sidebar({ map }: MapProps) {
   return (
     <div style={sidebarStyle}>
       <div style={headerStyle}>
-        <div style={titleStyle}>Resilient Routes</div>
-        <div style={subtitleStyle}>Map Analysis Tool</div>
+        <div style={titleStyle}>Highway Bridge Systems</div>
       </div>
 
       {error && (
@@ -376,25 +361,13 @@ export default function Sidebar({ map }: MapProps) {
 
       <div style={sectionStyle}>
         <div style={sectionTitleStyle}>Step 2: Load Data</div>
-        <Button 
-          onClick={display_roads} 
-          isLoading={loading === "roads"}
-          disabled={!selected_coords}
-        >
+        <Button onClick={display_roads} isLoading={loading === "roads"} disabled={!selected_coords}>
           🛣️ Load Roads
         </Button>
-        <Button 
-          onClick={display_bridges} 
-          isLoading={loading === "bridges"}
-          disabled={!selected_coords}
-        >
+        <Button onClick={display_bridges} isLoading={loading === "bridges"} disabled={!selected_coords}>
           🌉 Load Bridges
         </Button>
-        <Button 
-          onClick={display_earthquakes} 
-          isLoading={loading === "earthquakes"}
-          disabled={!selected_coords}
-        >
+        <Button onClick={display_earthquakes} isLoading={loading === "earthquakes"} disabled={!selected_coords}>
           🌍 Load Earthquake
         </Button>
         {show_road_legend && (
@@ -411,14 +384,16 @@ export default function Sidebar({ map }: MapProps) {
             <div style={{ fontWeight: "500", marginBottom: "4px" }}>{shakemap_data.location}</div>
             <div>Magnitude: {shakemap_data.actual_magnitude.toFixed(1)}</div>
             {shakemap_data.ground_motions.PGA?.max && (
-              <div>PGA: {parseFloat(String(shakemap_data.ground_motions.PGA.max)).toFixed(3)} {shakemap_data.ground_motions.PGA.units}</div>
+              <div>
+                PGA: {parseFloat(String(shakemap_data.ground_motions.PGA.max)).toFixed(3)} {shakemap_data.ground_motions.PGA.units}
+              </div>
             )}
             {shakemap_data.ground_motions.PGV?.max && (
-              <div>PGV: {parseFloat(String(shakemap_data.ground_motions.PGV.max)).toFixed(3)} {shakemap_data.ground_motions.PGV.units}</div>
+              <div>
+                PGV: {parseFloat(String(shakemap_data.ground_motions.PGV.max)).toFixed(3)} {shakemap_data.ground_motions.PGV.units}
+              </div>
             )}
-            {shakemap_data.ground_motions.MMI?.max && (
-              <div>MMI: {parseFloat(String(shakemap_data.ground_motions.MMI.max)).toFixed(1)}</div>
-            )}
+            {shakemap_data.ground_motions.MMI?.max && <div>MMI: {parseFloat(String(shakemap_data.ground_motions.MMI.max)).toFixed(1)}</div>}
           </div>
         </div>
       )}
@@ -438,11 +413,7 @@ export default function Sidebar({ map }: MapProps) {
           min="0"
           max="10"
         />
-        <Button 
-          onClick={display_bridge_failures} 
-          isLoading={loading === "failures"}
-          disabled={!shakemap_data}
-        >
+        <Button onClick={display_bridge_failures} isLoading={loading === "failures"} disabled={!shakemap_data}>
           ⚠️ Calculate Bridge Failures
         </Button>
       </div>
@@ -450,7 +421,7 @@ export default function Sidebar({ map }: MapProps) {
       {bridge_failures.length > 0 && (
         <div style={sectionStyle}>
           <div style={sectionTitleStyle}>Bridge Failure Probabilities</div>
-          {bridge_failures.map((failure: {bridge_id: number; failure_probability: number}) => (
+          {bridge_failures.map((failure: { bridge_id: number; failure_probability: number }) => (
             <div key={failure.bridge_id} style={{ fontSize: "13px", color: "#374151", marginBottom: "4px" }}>
               Bridge {failure.bridge_id}: {(failure.failure_probability * 100).toFixed(8)}%
             </div>
@@ -460,7 +431,7 @@ export default function Sidebar({ map }: MapProps) {
 
       <div style={{ ...sectionStyle, marginTop: "auto", borderTop: "2px solid #e5e7eb" }}>
         <Button onClick={handle_reset} variant="danger">
-          🔄 Reset All
+          Reset All
         </Button>
       </div>
 
